@@ -1,0 +1,46 @@
+<div class="card mb-3 <%= "border-draft" if outline.is_draft %>">
+  <div class="card-header d-flex align-items-center gap-2">
+    <strong class="me-auto"><%= outline.title %></strong>
+    <% if outline.is_draft %>
+      <span class="badge badge-draft">Working Draft</span>
+    <% end %>
+    <% if local_assigns[:show_compare_checkbox] %>
+      <div class="form-check mb-0">
+        <%= check_box_tag "outline_ids[]", outline.id, false, class: "form-check-input" %>
+      </div>
+    <% end %>
+  </div>
+  <div class="card-body">
+    <p class="text-muted small mb-2">
+      Review this outline before building your course. Module structure and lesson titles are suggestions, not authoritative curricula.
+    </p>
+    <p class="text-muted small mb-3">
+      <strong><%= outline.module_count %></strong> module<%= "s" if outline.module_count != 1 %>
+      &middot; <%= outline.created_at.strftime("%b %-d, %Y") %>
+    </p>
+    <div class="outline-body">
+      <%= render_markdown(outline.body) %>
+    </div>
+  </div>
+  <div class="card-footer d-flex align-items-center gap-2 flex-wrap">
+    <% unless outline.is_draft %>
+      <%= button_to "Set as Draft", set_draft_course_outline_path(outline),
+          method: :patch,
+          class: "btn btn-sm btn-outline-primary" %>
+    <% end %>
+    <%= button_to "Delete", course_outline_path(outline),
+        method: :delete,
+        data: { turbo_confirm: "Delete this outline?" },
+        class: "btn btn-sm btn-outline-danger" %>
+    <a class="btn btn-sm btn-link ms-auto"
+       data-bs-toggle="collapse"
+       href="#raw-<%= outline.id %>">
+      Show raw response
+    </a>
+  </div>
+  <div class="collapse" id="raw-<%= outline.id %>">
+    <div class="card-body border-top">
+      <pre class="gemini-raw"><%= outline.gemini_raw %></pre>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,60 @@
+<div class="row g-4">
+  <div class="col-lg-4">
+    <div class="card">
+      <div class="card-body">
+        <h4 class="card-title"><%= @brief.topic %></h4>
+        <dl class="mb-0">
+          <dt class="text-muted small">Target Audience</dt>
+          <dd><%= @brief.target_audience %></dd>
+
+          <dt class="text-muted small">Skill Level</dt>
+          <dd>
+            <% badge_class = case @brief.skill_level
+                             when "beginner"     then "bg-secondary"
+                             when "intermediate" then "bg-info text-dark"
+                             when "advanced"     then "badge-draft"
+                             end %>
+            <span class="badge <%= badge_class %>"><%= @brief.skill_level.capitalize %></span>
+          </dd>
+
+          <% if @brief.extra_notes.present? %>
+            <dt class="text-muted small">Notes</dt>
+            <dd><%= @brief.extra_notes %></dd>
+          <% end %>
+        </dl>
+      </div>
+      <div class="card-footer d-flex gap-2">
+        <%= button_to "Regenerate", regenerate_course_brief_path(@brief),
+            method: :post,
+            class: "btn btn-sm btn-outline-primary" %>
+        <%= button_to "Delete Brief", course_brief_path(@brief),
+            method: :delete,
+            data: { turbo_confirm: "Delete this brief and all its outlines?" },
+            class: "btn btn-sm btn-outline-danger" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-8">
+    <div class="d-flex align-items-center mb-3">
+      <h5 class="mb-0">Outlines (<%= @outlines.count %>)</h5>
+    </div>
+
+    <% if @outlines.count >= 2 %>
+      <%= form_tag compare_course_brief_path(@brief), method: :get, class: "mb-4" do %>
+        <% @outlines.each do |outline| %>
+          <%= render "outline_card", outline: outline, show_compare_checkbox: true %>
+        <% end %>
+        <%= submit_tag "Compare Selected", class: "btn btn-outline-secondary mt-2" %>
+      <% end %>
+    <% else %>
+      <% @outlines.each do |outline| %>
+        <%= render "outline_card", outline: outline, show_compare_checkbox: false %>
+      <% end %>
+    <% end %>
+
+    <% if @outlines.empty? %>
+      <p class="text-muted">No outlines yet. Use the Regenerate button to generate one.</p>
+    <% end %>
+  </div>
+</div>

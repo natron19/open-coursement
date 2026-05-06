@@ -1,0 +1,14 @@
+<div class="mb-3">
+  <%= link_to "&larr; Back to brief".html_safe, course_brief_path(@brief), class: "text-muted" %>
+</div>
+
+<h1 class="mb-4">Compare: <%= @brief.topic %></h1>
+
+<div class="row g-4">
+  <% @outlines.each do |outline| %>
+    <div class="col-md-6">
+      <h5 style="color: var(--accent);"><%= outline.title %></h5>
+      <%= render "outline_card", outline: outline, show_compare_checkbox: false %>
+    </div>
+  <% end %>
+</div>

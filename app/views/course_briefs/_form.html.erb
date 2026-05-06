@@ -1,0 +1,77 @@
+<%= form_with model: brief, class: "needs-validation",
+    data: { controller: "spinner", action: "submit->spinner#start" } do |f| %>
+  <% if brief.errors.any? %>
+    <div class="alert alert-danger">
+      <ul class="mb-0">
+        <% brief.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= f.label :topic, "Course Topic", class: "form-label" %>
+    <%= f.text_field :topic,
+        class: "form-control #{"is-invalid" if brief.errors[:topic].any?}",
+        placeholder: "e.g. Python for Data Analysis with Pandas" %>
+    <% if brief.errors[:topic].any? %>
+      <div class="invalid-feedback"><%= brief.errors[:topic].first %></div>
+    <% end %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :target_audience, "Target Audience", class: "form-label" %>
+    <%= f.text_field :target_audience,
+        class: "form-control #{"is-invalid" if brief.errors[:target_audience].any?}",
+        placeholder: "e.g. Business analysts who know Excel" %>
+    <% if brief.errors[:target_audience].any? %>
+      <div class="invalid-feedback"><%= brief.errors[:target_audience].first %></div>
+    <% end %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :skill_level, "Skill Level", class: "form-label d-block" %>
+    <% CourseBrief::SKILL_LEVELS.each do |level| %>
+      <div class="form-check form-check-inline">
+        <%= f.radio_button :skill_level, level,
+            class: "form-check-input",
+            id: "skill_level_#{level}" %>
+        <%= f.label :skill_level, level.capitalize,
+            class: "form-check-label",
+            for: "skill_level_#{level}" %>
+      </div>
+    <% end %>
+    <% if brief.errors[:skill_level].any? %>
+      <div class="text-danger small mt-1"><%= brief.errors[:skill_level].first %></div>
+    <% end %>
+  </div>
+
+  <div class="mb-4">
+    <%= f.label :extra_notes, "Additional Notes (optional)", class: "form-label" %>
+    <%= f.text_area :extra_notes,
+        class: "form-control #{"is-invalid" if brief.errors[:extra_notes].any?}",
+        placeholder: "e.g. Emphasize real-world datasets; avoid computer science theory",
+        rows: 3 %>
+    <% if brief.errors[:extra_notes].any? %>
+      <div class="invalid-feedback"><%= brief.errors[:extra_notes].first %></div>
+    <% end %>
+  </div>
+
+  <div class="d-flex align-items-center gap-3 flex-wrap">
+    <%= f.submit "Generate Outline", class: "btn btn-primary",
+        data: { spinner_target: "submit" } %>
+
+    <div data-spinner-target="spinner" class="d-none d-flex align-items-center gap-2">
+      <span class="spinner-border spinner-border-sm" role="status"></span>
+      <span class="text-muted">Generating your outline&hellip;</span>
+    </div>
+
+    <button type="button" class="btn btn-outline-secondary d-none"
+            data-spinner-target="cancel"
+            data-action="click->spinner#cancel">
+      Cancel
+    </button>
+  </div>
+  <p class="text-muted small mt-2">Gemini will generate your outline in a few seconds.</p>
+<% end %>
