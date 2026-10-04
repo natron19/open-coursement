@@ -52,7 +52,7 @@ RSpec.describe "CourseBriefs", type: :request do
         }.not_to change(CourseBrief, :count)
 
         expect(CourseOutline.count).to eq(0)
-        expect(response).to have_http_status(:ok)
+        expect(response).to have_http_status(:unprocessable_entity)
       end
     end
   end

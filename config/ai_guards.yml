@@ -1,0 +1,13 @@
+# Per-app guardrail configuration, read by AiGuardConfig.
+# See docs/ai-guardrails.md (Layer 1b: AiOutputGuard) and docs/ai-evals.md.
+
+# Course outline authoring; personal distress is out of scope.
+crisis_terms: []
+
+# coursement_outline_v1 returns Markdown. CourseBriefsController stores it as-is and
+# only reads the "# " title line (falling back to the topic), so no JSON rules apply.
+templates:
+  health_ping:
+    format: text
+  coursement_outline_v1:
+    format: text
