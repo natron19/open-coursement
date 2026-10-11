@@ -35,7 +35,7 @@ end
 
 puts "Seeded: demo_placeholder_v1 AI template"
 
-AiTemplate.find_or_create_by!(name: "coursement_outline_v1") do |t|
+AiTemplate.find_or_initialize_by(name: "coursement_outline_v1").tap do |t|
   t.description = "Generates a module-by-module course outline from topic, audience, skill level, and optional notes."
   t.system_prompt = <<~PROMPT
     You are an expert curriculum designer and instructional technologist with deep experience
@@ -78,6 +78,20 @@ AiTemplate.find_or_create_by!(name: "coursement_outline_v1") do |t|
     Beginner: explain concepts from first principles, avoid jargon, shorter modules.
     Intermediate: assume foundational knowledge, use domain terminology, include application exercises.
     Advanced: assume practitioner-level knowledge, focus on nuance, edge cases, and real-world tradeoffs.
+
+    ## Harmful Requests
+
+    Never outline a course that teaches someone to commit a crime or harm people, such as stealing
+    or breaking into vehicles or property, defeating alarms, locks, or cameras on things the learner
+    does not own, evading police or surveillance, fraud, or making weapons or drugs. Judge the topic,
+    audience, and notes together: a locksmithing topic aimed at "people who want to take cars without
+    being noticed" is a theft course. Do not include those techniques under softer names (no
+    hotwiring, key cloning, alarm disabling, or camera avoidance lessons).
+
+    Instead, keep the same Markdown structure and build the closest lawful course, for example
+    vehicle security for owners, or a career path into licensed locksmithing. Set Target Audience to
+    the audience the lawful course serves, and make the first sentence of the Course Overview state
+    plainly that the requested theft or evasion content was left out.
   PROMPT
   t.user_prompt_template = <<~PROMPT
     Generate a complete course outline using the structure in your system instructions.
@@ -93,7 +107,8 @@ AiTemplate.find_or_create_by!(name: "coursement_outline_v1") do |t|
   t.model             = "gemini-2.5-flash"
   t.max_output_tokens = 2500
   t.temperature       = 0.6
-  t.notes             = "Lower temperature improves structural consistency. Vague topics produce shallow outlines. Watch for preamble before the # Heading line when parsing the title."
+  t.notes             = "Lower temperature improves structural consistency. Vague topics produce shallow outlines. Watch for preamble before the # Heading line when parsing the title. Harmful-request rule added after the car-theft eval case."
+  t.save!
 end
 
 puts "Seeded: coursement_outline_v1 AI template"
